@@ -1,0 +1,174 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">SmartNest</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_scene">Scene</string>
+    <string name="nav_mall">Mall</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home Screen -->
+    <string name="greeting">Good afternoon, Alex</string>
+    <string name="date_format">Monday, January 26, 2026</string>
+    <string name="quick_scenes">Quick Scenes</string>
+    <string name="device_status">Device Status</string>
+    <string name="all_devices">All %d</string>
+    <string name="morning_mode">Morning Mode</string>
+    <string name="sleep_mode">Sleep Mode</string>
+    <string name="home_mode">Home Mode</string>
+    <string name="enabled">On</string>
+    <string name="disabled">Off</string>
+    <string name="air_conditioner">Air Conditioner</string>
+    <string name="living_room_light">Living Room Light</string>
+    <string name="smart_lock">Smart Lock</string>
+    <string name="locked">Locked</string>
+
+    <!-- Scene Screen -->
+    <string name="smart_scenes">Smart Scenes</string>
+    <string name="workday_7am">Weekdays 7:00 AM</string>
+    <string name="daily_23pm">Daily 11:00 PM</string>
+    <string name="geo_trigger">Location Trigger</string>
+    <string name="morning_mode_desc">Open curtains, play music, start coffee machine.</string>
+    <string name="sleep_mode_desc">Turn off all lights, set AC to sleep mode.</string>
+    <string name="home_mode_desc">Turn on hall light, start AC, play welcome voice.</string>
+
+    <!-- Mall Screen -->
+    <string name="mall_title">SmartNest Mall</string>
+    <string name="hot_products">Hot Products</string>
+    <string name="more_products">More Products</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="buy">Buy</string>
+
+    <!-- Profile Screen -->
+    <string name="my_orders">My Orders</string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="system_settings">Settings</string>
+    <string name="community">Community</string>
+    <string name="logout">Log Out</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">Settings</string>
+    <string name="appearance_preview">Appearance Preview</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
+    <string name="notification">Notification</string>
+    <string name="push_notification">Push Notification</string>
+    <string name="device_alert">Device Alert</string>
+    <string name="network">Network</string>
+    <string name="network_settings">Network Settings</string>
+    <string name="language">Language</string>
+    <string name="simplified_chinese">简体中文</string>
+    <string name="english">English</string>
+    <string name="security">Security</string>
+    <string name="privacy_settings">Privacy Settings</string>
+    <string name="about">About</string>
+    <string name="version_info">Version Info</string>
+    <string name="version">v2.1.0</string>
+
+    <!-- Cart Screen -->
+    <string name="cart">Shopping Cart</string>
+    <string name="product_total">Product Total</string>
+    <string name="shipping_fee">Shipping Fee</string>
+    <string name="total">Total</string>
+    <string name="checkout">Checkout</string>
+    <string name="delete">Delete</string>
+
+    <!-- Payment Screen -->
+    <string name="confirm_order">Confirm Order</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="credit_card">Credit / Debit Card</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="ambient_light_pro">Smart Ambient Light Pro</string>
+    <string name="thermostat">Smart Thermostat</string>
+    <string name="shipping_address">Shipping Address</string>
+    <string name="address">No. 88 Jianguo Road, Chaoyang District, Beijing</string>
+    <string name="confirm_pay">Confirm Payment ¥%s</string>
+
+    <!-- Order Screen -->
+    <string name="my_orders_title">My Orders</string>
+    <string name="order_number">Order No: %s</string>
+    <string name="total_items">%d items in total</string>
+    <string name="view_details">View Details</string>
+
+    <!-- Favorite Screen -->
+    <string name="my_favorites_title">My Favorites</string>
+
+    <!-- Scene Config Screen -->
+    <string name="scene_config">%s Config</string>
+    <string name="scene_name">Scene Name</string>
+    <string name="trigger_condition">Trigger Condition</string>
+    <string name="set_trigger_condition">Set Trigger Condition</string>
+    <string name="execute_action">Execute Action</string>
+    <string name="add_device_action">Add Device Action</string>
+    <string name="execute_time">Execute Time</string>
+    <string name="set_execute_time">Set Execute Time</string>
+    <string name="save">Save</string>
+
+    <!-- Add Scene Screen -->
+    <string name="add_scene">Add Scene</string>
+    <string name="enter_scene_name">Enter Scene Name</string>
+    <string name="scene_icon">Scene Icon</string>
+
+    <!-- Home Mode Config Screen -->
+    <string name="home_mode_config">Home Mode Config</string>
+    <string name="geolocation">Geolocation</string>
+    <string name="geo_desc">Within 500m of home area</string>
+    <string name="turn_on_hall_light">Turn on hall light</string>
+    <string name="brightness_80">Brightness 80%</string>
+    <string name="ac_comfort_mode">Set AC to comfort mode</string>
+    <string name="play_welcome">Play welcome voice</string>
+    <string name="turn_on">Turn On</string>
+    <string name="save_config">Save Config</string>
+
+    <!-- Notification Screen -->
+    <string name="notification_title">Notifications</string>
+    <string name="device_exception">Device Exception</string>
+    <string name="scene_execution">Scene Execution</string>
+    <string name="system_update">System Update</string>
+    <string name="security_alert">Security Alert</string>
+
+    <!-- Family Member Screen -->
+    <string name="family_members">Family Members</string>
+
+    <!-- Monitor Preview Screen -->
+    <string name="home_monitor">Home Monitor</string>
+    <string name="living_room_camera">Living Room Camera (Offline)</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="live_preview">Live Preview</string>
+
+    <!-- Energy Analysis Screen -->
+    <string name="energy_analysis">Energy Analysis</string>
+    <string name="monthly_electricity">Monthly Electricity</string>
+    <string name="down_from_last_month">%d%% down from last month</string>
+    <string name="device_power_ranking">Device Power Ranking</string>
+
+    <!-- Device Management Screen -->
+    <string name="device_management">Device Management</string>
+
+    <!-- Voice Search Screen -->
+    <string name="voice_assistant">Voice Assistant</string>
+    <string name="say_command">Please say a command…</string>
+    <string name="example_commands">Example Commands</string>
+    <string name="cmd_lights_on">Turn on living room light</string>
+    <string name="cmd_ac_26">Set AC to 26 degrees</string>
+    <string name="cmd_home_mode">Start home mode</string>
+    <string name="cmd_weather">How\'s the weather today</string>
+
+    <!-- Community Screen -->
+    <string name="community_title">Smart Home Community</string>
+
+    <!-- Splash Screen -->
+    <string name="slogan">Smart Life, At Your Fingertips</string>
+    <string name="copyright">© 2026 SmartNest Inc. Version %s</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading...</string>
+    <string name="error_network">Network error, please check your connection</string>
+    <string name="error_unknown">Unknown error, please try again later</string>
+</resources>

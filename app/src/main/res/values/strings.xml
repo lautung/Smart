@@ -1,0 +1,174 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">SmartNest</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">首页</string>
+    <string name="nav_scene">场景</string>
+    <string name="nav_mall">商城</string>
+    <string name="nav_profile">我的</string>
+
+    <!-- Home Screen -->
+    <string name="greeting">下午好，Alex</string>
+    <string name="date_format">2026 年 1 月 26 日，星期一</string>
+    <string name="quick_scenes">快捷场景</string>
+    <string name="device_status">设备状态</string>
+    <string name="all_devices">全部 %d</string>
+    <string name="morning_mode">起床模式</string>
+    <string name="sleep_mode">睡眠模式</string>
+    <string name="home_mode">回家模式</string>
+    <string name="enabled">已开启</string>
+    <string name="disabled">已关闭</string>
+    <string name="air_conditioner">空调</string>
+    <string name="living_room_light">客厅灯</string>
+    <string name="smart_lock">智能门锁</string>
+    <string name="locked">已锁定</string>
+
+    <!-- Scene Screen -->
+    <string name="smart_scenes">智能场景</string>
+    <string name="workday_7am">工作日 7:00</string>
+    <string name="daily_23pm">每天 23:00</string>
+    <string name="geo_trigger">地理位置触发</string>
+    <string name="morning_mode_desc">开启窗帘，播放音乐，咖啡机启动。</string>
+    <string name="sleep_mode_desc">关闭所有灯，空调调至睡眠温度。</string>
+    <string name="home_mode_desc">开启门厅灯，空调启动，播放欢迎语音。</string>
+
+    <!-- Mall Screen -->
+    <string name="mall_title">SmartNest 商城</string>
+    <string name="hot_products">热门产品</string>
+    <string name="more_products">更多产品</string>
+    <string name="add_to_cart">加入购物车</string>
+    <string name="buy">购买</string>
+
+    <!-- Profile Screen -->
+    <string name="my_orders">我的订单</string>
+    <string name="my_favorites">我的收藏</string>
+    <string name="system_settings">系统设置</string>
+    <string name="community">智家社区</string>
+    <string name="logout">退出登录</string>
+
+    <!-- Settings Screen -->
+    <string name="settings">系统设置</string>
+    <string name="appearance_preview">外观预览</string>
+    <string name="light">浅色</string>
+    <string name="dark">深色</string>
+    <string name="system">跟随系统</string>
+    <string name="notification">通知</string>
+    <string name="push_notification">推送通知</string>
+    <string name="device_alert">设备告警</string>
+    <string name="network">网络</string>
+    <string name="network_settings">网络设置</string>
+    <string name="language">语言</string>
+    <string name="simplified_chinese">简体中文</string>
+    <string name="english">English</string>
+    <string name="security">安全</string>
+    <string name="privacy_settings">隐私设置</string>
+    <string name="about">关于</string>
+    <string name="version_info">版本信息</string>
+    <string name="version">v2.1.0</string>
+
+    <!-- Cart Screen -->
+    <string name="cart">购物车</string>
+    <string name="product_total">商品总额</string>
+    <string name="shipping_fee">运费</string>
+    <string name="total">合计</string>
+    <string name="checkout">去结算</string>
+    <string name="delete">删除</string>
+
+    <!-- Payment Screen -->
+    <string name="confirm_order">确认订单</string>
+    <string name="payment_method">支付方式</string>
+    <string name="credit_card">信用卡 / 借记卡</string>
+    <string name="order_summary">订单摘要</string>
+    <string name="ambient_light_pro">智能氛围灯 Pro</string>
+    <string name="thermostat">智能温控器</string>
+    <string name="shipping_address">收货地址</string>
+    <string name="address">北京市朝阳区建国路88号</string>
+    <string name="confirm_pay">确认支付 ¥%s</string>
+
+    <!-- Order Screen -->
+    <string name="my_orders_title">我的订单</string>
+    <string name="order_number">订单号: %s</string>
+    <string name="total_items">共 %d 件商品</string>
+    <string name="view_details">查看详情</string>
+
+    <!-- Favorite Screen -->
+    <string name="my_favorites_title">我的收藏</string>
+
+    <!-- Scene Config Screen -->
+    <string name="scene_config">%s配置</string>
+    <string name="scene_name">场景名称</string>
+    <string name="trigger_condition">触发条件</string>
+    <string name="set_trigger_condition">设置触发条件</string>
+    <string name="execute_action">执行动作</string>
+    <string name="add_device_action">添加设备动作</string>
+    <string name="execute_time">执行时间</string>
+    <string name="set_execute_time">设置执行时间</string>
+    <string name="save">保存</string>
+
+    <!-- Add Scene Screen -->
+    <string name="add_scene">添加场景</string>
+    <string name="enter_scene_name">输入场景名称</string>
+    <string name="scene_icon">场景图标</string>
+
+    <!-- Home Mode Config Screen -->
+    <string name="home_mode_config">回家模式配置</string>
+    <string name="geolocation">地理位置</string>
+    <string name="geo_desc">进入家庭区域 500m 范围</string>
+    <string name="turn_on_hall_light">打开门厅灯</string>
+    <string name="brightness_80">亮度 80%</string>
+    <string name="ac_comfort_mode">空调设为舒适模式</string>
+    <string name="play_welcome">播放欢迎语音</string>
+    <string name="turn_on">开启</string>
+    <string name="save_config">保存配置</string>
+
+    <!-- Notification Screen -->
+    <string name="notification_title">通知</string>
+    <string name="device_exception">设备异常</string>
+    <string name="scene_execution">场景执行</string>
+    <string name="system_update">系统更新</string>
+    <string name="security_alert">安全提醒</string>
+
+    <!-- Family Member Screen -->
+    <string name="family_members">家庭成员</string>
+
+    <!-- Monitor Preview Screen -->
+    <string name="home_monitor">家庭监控</string>
+    <string name="living_room_camera">客厅摄像头 (离线)</string>
+    <string name="start_recording">开始录制</string>
+    <string name="live_preview">实时预览</string>
+
+    <!-- Energy Analysis Screen -->
+    <string name="energy_analysis">能耗分析</string>
+    <string name="monthly_electricity">本月总用电</string>
+    <string name="down_from_last_month">相比上月下降 %d%%</string>
+    <string name="device_power_ranking">设备耗电排行</string>
+
+    <!-- Device Management Screen -->
+    <string name="device_management">设备管理</string>
+
+    <!-- Voice Search Screen -->
+    <string name="voice_assistant">语音助手</string>
+    <string name="say_command">请说出指令…</string>
+    <string name="example_commands">示例指令</string>
+    <string name="cmd_lights_on">打开客厅灯</string>
+    <string name="cmd_ac_26">空调调到26度</string>
+    <string name="cmd_home_mode">启动回家模式</string>
+    <string name="cmd_weather">今天天气如何</string>
+
+    <!-- Community Screen -->
+    <string name="community_title">智家社区</string>
+
+    <!-- Splash Screen -->
+    <string name="slogan">智慧生活，触手可及</string>
+    <string name="copyright">© 2026 SmartNest Inc. 版本 %s</string>
+
+    <!-- Common -->
+    <string name="back">返回</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="retry">重试</string>
+    <string name="loading">加载中...</string>
+    <string name="error_network">网络错误，请检查连接</string>
+    <string name="error_unknown">未知错误，请稍后重试</string>
+</resources>

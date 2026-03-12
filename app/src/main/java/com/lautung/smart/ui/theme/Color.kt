@@ -1,0 +1,27 @@
+package com.lautung.smart.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+val SmartBlack = Color(0xFF000000)
+val SmartDarkPurple = Color(0xFF1A0B2E)
+val SmartDarkBlue = Color(0xFF000033)
+val SmartBlue = Color(0xFF3B82F6)
+val SmartNavyBlue = Color(0xFF1E40AF)
+val SmartPurple = Color(0xFF8B5CF6)
+val SmartDarkPurple2 = Color(0xFF7C3AED)
+val SmartGreen = Color(0xFF22C55E)
+val SmartDarkGreen = Color(0xFF15803D)
+val SmartYellow = Color(0xFFFBBF24)
+val SmartDarkYellow = Color(0xFFD97706)
+val SmartCyan = Color(0xFF06B6D4)
+val SmartPink = Color(0xFFEC4899)
+val SmartRed = Color(0xFFEF4444)
+val SmartWhite = Color(0xFFFFFFFF)
+val SmartGray800 = Color(0xFF1F2937)
+val SmartGray700 = Color(0xFF374151)
+val SmartGray600 = Color(0xFF4B5563)
+val SmartGray500 = Color(0xFF6B7280)
+val SmartGray400 = Color(0xFF9CA3AF)
+val SmartGray300 = Color(0xFFD1D5DB)
+val SmartGray200 = Color(0xFFE5E7EB)
+val SmartGray100 = Color(0xFFF3F4F6)
