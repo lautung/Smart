@@ -9,6 +9,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.lautung.smart.BuildConfig
 import com.lautung.smart.data.model.Device
 import com.lautung.smart.data.model.DeviceType
+import com.lautung.smart.data.model.Product
+import com.lautung.smart.data.model.Scene
+import com.lautung.smart.data.model.SceneAction
+import com.lautung.smart.data.model.User
+import com.lautung.smart.data.model.UserRole
 import com.lautung.smart.data.remote.api.SmartNestApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -28,48 +33,9 @@ private fun String.toDeviceType(): DeviceType {
     }
 }
 
-data class Product(
-    val id: String,
-    val name: String,
-    val description: String,
-    val price: Double,
-    val imageUrl: String,
-    val category: String,
-    val isHot: Boolean,
-    val stock: Int,
-    val rating: Float,
-    val reviewCount: Int
-)
-
-data class User(
-    val id: String,
-    val email: String,
-    val name: String,
-    val avatar: String?
-)
-
-data class Scene(
-    val id: String,
-    val name: String,
-    val icon: String,
-    val description: String?,
-    val triggerType: String,
-    val triggerConfig: Map<String, Any>?,
-    val actions: List<SceneAction>,
-    val isEnabled: Boolean,
-    val createdAt: Long,
-    val updatedAt: Long
-)
-
-data class SceneAction(
-    val deviceId: String,
-    val deviceName: String,
-    val action: String,
-    val parameters: Map<String, Any>?
-)
-
 class DeviceRepository(
-    private val api: SmartNestApi
+    private val api: SmartNestApi,
+    private val deviceDao: com.lautung.smart.data.local.DeviceDao
 ) {
     private val _devices = MutableStateFlow<List<Device>>(emptyList())
     val devices: StateFlow<List<Device>> = _devices.asStateFlow()
@@ -145,23 +111,43 @@ class DeviceRepository(
 
 class AuthRepository(
     private val api: SmartNestApi,
-    private val context: Context
+    private val dataStore: androidx.datastore.core.DataStore<androidx.datastore.preferences.core.Preferences>
 ) {
-    private val dataStore = context.dataStore
-    
+
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
         private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
     }
-    
+
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
-    
-    val isLoggedIn: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[ACCESS_TOKEN_KEY] != null
+
+    init {
+        if (BuildConfig.USE_MOCK_DATA) {
+            setMockUser()
+        }
     }
-    
+
+    val isLoggedIn: Flow<Boolean> = dataStore.data.map { prefs ->
+        if (BuildConfig.USE_MOCK_DATA) {
+            _currentUser.value != null
+        } else {
+            prefs[ACCESS_TOKEN_KEY] != null
+        }
+    }
+
     suspend fun login(email: String, password: String): Result<Unit> {
+        if (BuildConfig.USE_MOCK_DATA) {
+            delay(500)
+            _currentUser.value = User(
+                id = "1",
+                name = "Alex Chen",
+                email = email,
+                avatar = "",
+                role = UserRole.ADMIN
+            )
+            return Result.success(Unit)
+        }
         return try {
             val response = api.login(
                 com.lautung.smart.data.remote.dto.LoginRequest(email, password)
@@ -173,7 +159,8 @@ class AuthRepository(
                         id = authResponse.user.id,
                         email = authResponse.user.email,
                         name = authResponse.user.name,
-                        avatar = authResponse.user.avatar
+                        avatar = authResponse.user.avatar ?: "",
+                        role = UserRole.MEMBER
                     )
                 }
                 Result.success(Unit)
@@ -184,7 +171,19 @@ class AuthRepository(
             Result.failure(e)
         }
     }
-    
+
+    fun setMockUser() {
+        if (BuildConfig.USE_MOCK_DATA && _currentUser.value == null) {
+            _currentUser.value = User(
+                id = "1",
+                name = "Alex Chen",
+                email = "alex@smartnest.com",
+                avatar = "",
+                role = UserRole.ADMIN
+            )
+        }
+    }
+
     suspend fun logout() {
         try {
             api.logout()
@@ -210,7 +209,8 @@ class AuthRepository(
 }
 
 class ProductRepository(
-    private val api: SmartNestApi
+    private val api: SmartNestApi,
+    private val productDao: com.lautung.smart.data.local.ProductDao
 ) {
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     val products: StateFlow<List<Product>> = _products.asStateFlow()
@@ -257,12 +257,12 @@ class ProductRepository(
 
     private fun getMockProducts(): List<Product> {
         return listOf(
-            Product("1", "智能氛围灯", "1600 万色，语音控制", 299.0, "", "lighting", true, 100, 4.5f, 128),
-            Product("2", "智能温控器", "精准控温，节能舒适", 599.0, "", "climate", true, 50, 4.8f, 256),
-            Product("3", "智能门锁", "指纹识别，远程解锁", 1299.0, "", "security", true, 30, 4.7f, 89),
-            Product("4", "智能摄像头", "高清画质，移动侦测", 399.0, "", "security", false, 80, 4.3f, 67),
-            Product("5", "智能窗帘电机", "自动开合，语音控制", 699.0, "", "curtain", false, 40, 4.6f, 45),
-            Product("6", "智能音箱", "语音助手，音乐播放", 299.0, "", "audio", false, 120, 4.4f, 198)
+            Product("1", "智能氛围灯", 299.0, "1600 万色，语音控制", "", "lighting", true, 100, 4.5f, 128),
+            Product("2", "智能温控器", 599.0, "精准控温，节能舒适", "", "climate", true, 50, 4.8f, 256),
+            Product("3", "智能门锁", 1299.0, "指纹识别，远程解锁", "", "security", true, 30, 4.7f, 89),
+            Product("4", "智能摄像头", 399.0, "高清画质，移动侦测", "", "security", false, 80, 4.3f, 67),
+            Product("5", "智能窗帘电机", 699.0, "自动开合，语音控制", "", "curtain", false, 40, 4.6f, 45),
+            Product("6", "智能音箱", 299.0, "语音助手，音乐播放", "", "audio", false, 120, 4.4f, 198)
         )
     }
 
@@ -305,20 +305,27 @@ class ProductRepository(
 
     private fun getMockHotProducts(): List<Product> {
         return listOf(
-            Product("1", "智能氛围灯", "1600 万色，语音控制", 299.0, "", "lighting", true, 100, 4.5f, 128),
-            Product("2", "智能温控器", "精准控温，节能舒适", 599.0, "", "climate", true, 50, 4.8f, 256),
-            Product("3", "智能门锁", "指纹识别，远程解锁", 1299.0, "", "security", true, 30, 4.7f, 89)
+            Product("1", "智能氛围灯", 299.0, "1600 万色，语音控制", "", "lighting", true, 100, 4.5f, 128),
+            Product("2", "智能温控器", 599.0, "精准控温，节能舒适", "", "climate", true, 50, 4.8f, 256),
+            Product("3", "智能门锁", 1299.0, "指纹识别，远程解锁", "", "security", true, 30, 4.7f, 89)
         )
     }
 }
 
 class SceneRepository(
-    private val api: SmartNestApi
+    private val api: SmartNestApi,
+    private val sceneDao: com.lautung.smart.data.local.SceneDao
 ) {
     private val _scenes = MutableStateFlow<List<Scene>>(emptyList())
     val scenes: StateFlow<List<Scene>> = _scenes.asStateFlow()
-    
+
     suspend fun refreshScenes(): Result<List<Scene>> {
+        if (BuildConfig.USE_MOCK_DATA) {
+            delay(500)
+            val mockScenes = getMockScenes()
+            _scenes.value = mockScenes
+            return Result.success(mockScenes)
+        }
         return try {
             val response = api.getScenes()
             if (response.isSuccessful) {
@@ -327,20 +334,9 @@ class SceneRepository(
                         id = dto.id,
                         name = dto.name,
                         icon = dto.icon,
-                        description = dto.description,
-                        triggerType = dto.triggerType,
-                        triggerConfig = dto.triggerConfig,
-                        actions = dto.actions.map { actionDto ->
-                            SceneAction(
-                                deviceId = actionDto.deviceId,
-                                deviceName = actionDto.deviceName,
-                                action = actionDto.action,
-                                parameters = actionDto.parameters
-                            )
-                        },
+                        description = dto.description ?: "",
                         isEnabled = dto.isEnabled,
-                        createdAt = dto.createdAt,
-                        updatedAt = dto.updatedAt
+                        triggerType = dto.triggerType
                     )
                 } ?: emptyList()
                 _scenes.value = scenes
@@ -352,8 +348,21 @@ class SceneRepository(
             Result.failure(e)
         }
     }
-    
+
+    private fun getMockScenes(): List<Scene> {
+        return listOf(
+            Scene("1", "起床模式", "☀️", "工作日 7:00 开启窗帘，播放音乐，咖啡机启动。", true, "工作日 7:00", "time"),
+            Scene("2", "睡眠模式", "🌙", "每天 23:00 关闭所有灯，空调调至睡眠温度。", false, "每天 23:00", "time"),
+            Scene("3", "回家模式", "🏠", "地理位置触发，开启门厅灯，空调启动，播放欢迎语音。", true, null, "geofence")
+        )
+    }
+
     suspend fun createScene(scene: Scene): Result<Scene> {
+        if (BuildConfig.USE_MOCK_DATA) {
+            delay(300)
+            _scenes.value = _scenes.value + scene
+            return Result.success(scene)
+        }
         return try {
             val dto = com.lautung.smart.data.remote.dto.SceneDto(
                 id = scene.id,
@@ -361,28 +370,16 @@ class SceneRepository(
                 icon = scene.icon,
                 description = scene.description,
                 triggerType = scene.triggerType,
-                triggerConfig = scene.triggerConfig,
-                actions = scene.actions.map { action ->
-                    com.lautung.smart.data.remote.dto.SceneActionDto(
-                        deviceId = action.deviceId,
-                        deviceName = action.deviceName,
-                        action = action.action,
-                        parameters = action.parameters
-                    )
-                },
+                triggerConfig = null,
+                actions = emptyList(),
                 isEnabled = scene.isEnabled,
-                createdAt = scene.createdAt,
-                updatedAt = scene.updatedAt
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
             )
             val response = api.createScene(dto)
             if (response.isSuccessful) {
-                val created = response.body()
-                if (created != null) {
-                    _scenes.value = _scenes.value + scene
-                    Result.success(scene)
-                } else {
-                    Result.failure(Exception("Failed to create scene"))
-                }
+                _scenes.value = _scenes.value + scene
+                Result.success(scene)
             } else {
                 Result.failure(Exception("Failed to create scene: ${response.code()}"))
             }
@@ -390,8 +387,13 @@ class SceneRepository(
             Result.failure(e)
         }
     }
-    
+
     suspend fun deleteScene(sceneId: String): Result<Unit> {
+        if (BuildConfig.USE_MOCK_DATA) {
+            delay(300)
+            _scenes.value = _scenes.value.filter { it.id != sceneId }
+            return Result.success(Unit)
+        }
         return try {
             val response = api.deleteScene(sceneId)
             if (response.isSuccessful) {
@@ -404,8 +406,12 @@ class SceneRepository(
             Result.failure(e)
         }
     }
-    
+
     suspend fun executeScene(sceneId: String): Result<Unit> {
+        if (BuildConfig.USE_MOCK_DATA) {
+            delay(300)
+            return Result.success(Unit)
+        }
         return try {
             val response = api.executeScene(sceneId)
             if (response.isSuccessful) {
@@ -415,6 +421,12 @@ class SceneRepository(
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    fun toggleScene(sceneId: String, enabled: Boolean) {
+        _scenes.value = _scenes.value.map {
+            if (it.id == sceneId) it.copy(isEnabled = enabled) else it
         }
     }
 }

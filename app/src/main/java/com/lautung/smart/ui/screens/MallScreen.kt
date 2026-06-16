@@ -5,10 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,7 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.lautung.smart.data.model.Product
 import com.lautung.smart.ui.components.BottomNavigationBar
+import com.lautung.smart.ui.viewmodel.MallViewModel
+import com.lautung.smart.ui.viewmodel.UiState
 
 @Composable
 fun MallScreen(
@@ -25,8 +33,20 @@ fun MallScreen(
     onNavigateToCart: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToScene: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    viewModel: MallViewModel = hiltViewModel()
 ) {
+    val productsState by viewModel.productsState.collectAsState()
+
+    val bgColors = listOf(
+        Color(0xFF1E3A8A).copy(alpha = 0.5f),
+        Color(0xFF581C87).copy(alpha = 0.5f),
+        Color(0xFF14532D).copy(alpha = 0.5f),
+        Color(0xFF7C2D12).copy(alpha = 0.5f),
+        Color(0xFF1E3A8A).copy(alpha = 0.5f),
+        Color(0xFF581C87).copy(alpha = 0.5f)
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,81 +68,48 @@ fun MallScreen(
                 fontWeight = FontWeight.Medium
             )
         }
-        
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // 智能氛围灯
-            item {
-                ProductCard(
-                    icon = "💡",
-                    name = "智能氛围灯",
-                    description = "1600 万色，语音控制",
-                    price = 299,
-                    backgroundColor = Color(0xFF1E3A8A).copy(alpha = 0.5f),
-                    onClick = { onProductClick("智能氛围灯") },
-                    onBuyClick = { 
-                        onNavigateToCart()
-                    }
-                )
+
+        when (val state = productsState) {
+            is UiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
-            
-            // 智能温控器
-            item {
-                ProductCard(
-                    icon = "🌡️",
-                    name = "智能温控器",
-                    description = "精准控温，节能省电",
-                    price = 459,
-                    backgroundColor = Color(0xFF581C87).copy(alpha = 0.5f),
-                    onClick = { onProductClick("智能温控器") },
-                    onBuyClick = { 
-                        onNavigateToCart()
-                    }
-                )
+            is UiState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = state.message, color = MaterialTheme.colorScheme.error)
+                }
             }
-            
-            // 智能门锁
-            item {
-                ProductCard(
-                    icon = "🔒",
-                    name = "智能门锁 Pro",
-                    description = "指纹解锁，远程监控",
-                    price = 1299,
-                    backgroundColor = Color(0xFF14532D).copy(alpha = 0.5f),
-                    onClick = { onProductClick("智能门锁 Pro") },
-                    onBuyClick = { 
-                        onNavigateToCart()
+            is UiState.Success -> {
+                val products = state.data
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(products) { product ->
+                        val index = products.indexOf(product)
+                        ProductCard(
+                            icon = product.displayIcon,
+                            name = product.name,
+                            description = product.description,
+                            price = product.price.toInt(),
+                            backgroundColor = bgColors.getOrElse(index) { bgColors[0] },
+                            onClick = { onProductClick(product.name) },
+                            onBuyClick = { onNavigateToCart() }
+                        )
                     }
-                )
-            }
-            
-            // 智能摄像头
-            item {
-                ProductCard(
-                    icon = "📷",
-                    name = "智能摄像头",
-                    description = "1080P 高清，夜视功能",
-                    price = 399,
-                    backgroundColor = Color(0xFF7C2D12).copy(alpha = 0.5f),
-                    onClick = { onProductClick("智能摄像头") },
-                    onBuyClick = { 
-                        onNavigateToCart()
+                    item {
+                        Spacer(modifier = Modifier.height(100.dp))
                     }
-                )
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
+                }
             }
         }
-        
+
         // 底部导航栏
         BottomNavigationBar(
             modifier = Modifier.fillMaxWidth(),

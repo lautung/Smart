@@ -34,12 +34,14 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.lautung.smart.R
 import com.lautung.smart.ui.components.BottomNavigationBar
 import com.lautung.smart.ui.theme.Language
 import com.lautung.smart.ui.theme.LanguageManager
 import com.lautung.smart.ui.theme.ThemeManager
 import com.lautung.smart.ui.theme.ThemeMode
+import com.lautung.smart.ui.viewmodel.AuthViewModel
 
 @Composable
 fun SettingsScreen(
@@ -49,7 +51,8 @@ fun SettingsScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToMall: () -> Unit,
     onNavigateToScene: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     // 本地状态用于即时更新 UI
     var selectedThemeMode by remember { mutableStateOf(ThemeMode.SYSTEM) }
@@ -413,7 +416,7 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
                         .background(Color(0xFFEF4444).copy(alpha = 0.1f))
-                        .clickable { }
+                        .clickable { authViewModel.logout() }
                         .padding(vertical = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {

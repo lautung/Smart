@@ -1,72 +1,77 @@
 package com.lautung.smart.di
 
+import android.content.Context
+import com.lautung.smart.data.local.AppDatabase
+import com.lautung.smart.data.local.DeviceDao
+import com.lautung.smart.data.local.ProductDao
+import com.lautung.smart.data.local.SceneDao
 import com.lautung.smart.data.remote.api.SmartNestApi
-import com.lautung.smart.data.repository.AuthRepository
-import com.lautung.smart.data.repository.DeviceRepository
-import com.lautung.smart.data.repository.ProductRepository
-import com.lautung.smart.data.repository.SceneRepository
-import com.lautung.smart.ui.viewmodel.AuthViewModel
-import com.lautung.smart.ui.viewmodel.DeviceViewModel
-import com.lautung.smart.ui.viewmodel.HomeViewModel
-import com.lautung.smart.ui.viewmodel.MallViewModel
-import com.lautung.smart.ui.viewmodel.ProfileViewModel
-import com.lautung.smart.ui.viewmodel.SceneViewModel
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 private const val BASE_URL = "https://api.smartnest.example.com/"
 
-val networkModule = module {
-    single {
-        HttpLoggingInterceptor().apply {
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-    }
-
-    single {
-        OkHttpClient.Builder()
-            .addInterceptor(get<HttpLoggingInterceptor>())
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
-    single {
-        Retrofit.Builder()
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(get())
+            .client(okHttpClient)
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }
-    
-    single { get<Retrofit>().create(SmartNestApi::class.java) }
-}
 
-val repositoryModule = module {
-    single { DeviceRepository(get()) }
-    single { AuthRepository(get(), androidContext()) }
-    single { ProductRepository(get()) }
-    single { SceneRepository(get()) }
-}
+    @Provides
+    @Singleton
+    fun provideSmartNestApi(retrofit: Retrofit): SmartNestApi {
+        return retrofit.create(SmartNestApi::class.java)
+    }
 
-val viewModelModule = module {
-    viewModel { HomeViewModel(get()) }
-    viewModel { AuthViewModel(get()) }
-    viewModel { DeviceViewModel(get()) }
-    viewModel { SceneViewModel(get()) }
-    viewModel { MallViewModel(get()) }
-    viewModel { ProfileViewModel(get()) }
-}
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getInstance(context)
+    }
 
-val appModules = listOf(
-    networkModule,
-    repositoryModule,
-    viewModelModule
-)
+    @Provides
+    fun provideDeviceDao(database: AppDatabase): DeviceDao {
+        return database.deviceDao()
+    }
+
+    @Provides
+    fun provideProductDao(database: AppDatabase): ProductDao {
+        return database.productDao()
+    }
+
+    @Provides
+    fun provideSceneDao(database: AppDatabase): SceneDao {
+        return database.sceneDao()
+    }
+}

@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lautung.smart.data.model.Device
 import com.lautung.smart.data.repository.DeviceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class UiState<out T> {
     object Loading : UiState<Nothing>()
@@ -15,20 +17,21 @@ sealed class UiState<out T> {
     data class Error(val message: String) : UiState<Nothing>()
 }
 
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val deviceRepository: DeviceRepository
 ) : ViewModel() {
-    
+
     private val _devicesState = MutableStateFlow<UiState<List<Device>>>(UiState.Loading)
     val devicesState: StateFlow<UiState<List<Device>>> = _devicesState.asStateFlow()
-    
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-    
+
     init {
         loadDevices()
     }
-    
+
     fun loadDevices() {
         viewModelScope.launch {
             _devicesState.value = UiState.Loading
@@ -40,7 +43,7 @@ class HomeViewModel(
             }
         }
     }
-    
+
     fun refreshDevices() {
         viewModelScope.launch {
             _isRefreshing.value = true

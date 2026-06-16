@@ -4,10 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,7 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.lautung.smart.data.model.Device
+import com.lautung.smart.data.model.DeviceType
 import com.lautung.smart.ui.components.BottomNavigationBar
+import com.lautung.smart.ui.viewmodel.DeviceViewModel
+import com.lautung.smart.ui.viewmodel.UiState
 
 @Composable
 fun DeviceManagementScreen(
@@ -23,8 +32,11 @@ fun DeviceManagementScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToMall: () -> Unit,
     onNavigateToScene: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    viewModel: DeviceViewModel = hiltViewModel()
 ) {
+    val devicesState by viewModel.devicesState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -32,7 +44,7 @@ fun DeviceManagementScreen(
     ) {
         // 状态栏占位
         Spacer(modifier = Modifier.height(44.dp))
-        
+
         // 顶部导航栏
         Row(
             modifier = Modifier
@@ -66,35 +78,38 @@ fun DeviceManagementScreen(
                 )
             }
         }
-        
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // 客厅空调
-            item {
-                DeviceItem(
-                    name = "客厅空调",
-                    status = "在线 · 24°C",
-                    icon = "❄️"
-                )
+
+        when (val state = devicesState) {
+            is UiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
-            
-            // 主卧吸顶灯
-            item {
-                DeviceItem(
-                    name = "主卧吸顶灯",
-                    status = "在线 · 已开启",
-                    icon = "💡"
-                )
+            is UiState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = state.message, color = MaterialTheme.colorScheme.error)
+                }
             }
-            
-            item {
-                Spacer(modifier = Modifier.height(100.dp))
+            is UiState.Success -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(state.data) { device ->
+                        DeviceItem(
+                            name = device.name,
+                            status = if (device.isOnline) "在线 · ${device.status}" else "离线",
+                            icon = device.type.toEmoji()
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(100.dp))
+                    }
+                }
             }
         }
-        
+
         // 底部导航栏
         BottomNavigationBar(
             modifier = Modifier.fillMaxWidth(),
@@ -108,6 +123,16 @@ fun DeviceManagementScreen(
                 }
             }
         )
+    }
+}
+
+private fun DeviceType.toEmoji(): String {
+    return when (this) {
+        DeviceType.AIR_CONDITIONER -> "❄️"
+        DeviceType.LIGHT -> "💡"
+        DeviceType.DOOR_LOCK -> "🔒"
+        DeviceType.CAMERA -> "📷"
+        DeviceType.THERMOSTAT -> "🌡️"
     }
 }
 

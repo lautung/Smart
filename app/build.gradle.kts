@@ -1,15 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.lautung.smart"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.lautung.smart"
@@ -42,7 +40,7 @@ android {
 
 android.buildTypes.all {
     buildConfigField("String", "BASE_URL", "\"https://api.smartnest.example.com/\"")
-    buildConfigField("boolean", "USE_MOCK_DATA", "true")  // 切换为 false 使用真实API
+    buildConfigField("boolean", "USE_MOCK_DATA", "true")
 }
 
 dependencies {
@@ -55,24 +53,30 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.navigation.compose)
-    
-    implementation(libs.koin.android)
-    implementation(libs.koin.compose)
-    implementation(libs.koin.core)
-    
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.moshi)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
-    
+
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
-    
+
     implementation(libs.datastore.preferences)
-    
+
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
-    
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)

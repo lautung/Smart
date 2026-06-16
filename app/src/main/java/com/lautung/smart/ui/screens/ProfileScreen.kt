@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,7 +18,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.lautung.smart.data.model.User
 import com.lautung.smart.ui.components.BottomNavigationBar
+import com.lautung.smart.ui.viewmodel.ProfileViewModel
+import com.lautung.smart.ui.viewmodel.UiState
 
 @Composable
 fun ProfileScreen(
@@ -26,8 +33,24 @@ fun ProfileScreen(
     onNavigateToMall: () -> Unit,
     onNavigateToScene: () -> Unit,
     onNavigateToOrder: () -> Unit,
-    onNavigateToFavorite: () -> Unit
+    onNavigateToFavorite: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val profileState by viewModel.profileState.collectAsState()
+
+    val userName: String
+    val userEmail: String
+    when (val state = profileState) {
+        is UiState.Success -> {
+            userName = state.data?.name ?: "未登录"
+            userEmail = state.data?.email ?: ""
+        }
+        else -> {
+            userName = "未登录"
+            userEmail = ""
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,29 +82,27 @@ fun ProfileScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Alex Chen",
+                        text = userName,
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "alex@smartnest.com",
+                        text = userEmail,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         fontSize = 14.sp
                     )
                 }
             }
-            
+
             // 菜单项
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 ProfileMenuItem(
                     icon = "📦",
                     title = "我的订单",
-                    onClick = { 
-                        onNavigateToOrder()
-                    }
+                    onClick = { onNavigateToOrder() }
                 )
             }
 
@@ -89,9 +110,7 @@ fun ProfileScreen(
                 ProfileMenuItem(
                     icon = "❤️",
                     title = "我的收藏",
-                    onClick = { 
-                        onNavigateToFavorite()
-                    }
+                    onClick = { onNavigateToFavorite() }
                 )
             }
 
@@ -110,7 +129,7 @@ fun ProfileScreen(
                     onClick = onNavigateToCommunity
                 )
             }
-            
+
             // 退出登录按钮
             item {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -125,7 +144,7 @@ fun ProfileScreen(
                             .height(56.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color(0xFFEF4444).copy(alpha = 0.1f))
-                            .clickable { },
+                            .clickable { viewModel.logout() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -137,12 +156,12 @@ fun ProfileScreen(
                     }
                 }
             }
-            
+
             item {
                 Spacer(modifier = Modifier.height(100.dp))
             }
         }
-        
+
         // 底部导航栏
         BottomNavigationBar(
             modifier = Modifier.fillMaxWidth(),

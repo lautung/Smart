@@ -3,17 +3,19 @@ package com.lautung.smart.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lautung.smart.data.model.Device
+import com.lautung.smart.data.model.Product
+import com.lautung.smart.data.model.Scene
+import com.lautung.smart.data.model.User
 import com.lautung.smart.data.repository.AuthRepository
 import com.lautung.smart.data.repository.DeviceRepository
-import com.lautung.smart.data.repository.Product
 import com.lautung.smart.data.repository.ProductRepository
-import com.lautung.smart.data.repository.Scene
 import com.lautung.smart.data.repository.SceneRepository
-import com.lautung.smart.data.repository.User
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AuthState(
     val isLoggedIn: Boolean = false,
@@ -21,17 +23,18 @@ data class AuthState(
     val error: String? = null
 )
 
-class AuthViewModel(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-    
+
     private val _authState = MutableStateFlow(AuthState())
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
-    
+
     init {
         checkLoginStatus()
     }
-    
+
     private fun checkLoginStatus() {
         viewModelScope.launch {
             authRepository.isLoggedIn.collect { isLoggedIn ->
@@ -39,11 +42,11 @@ class AuthViewModel(
             }
         }
     }
-    
+
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true, error = null)
-            
+
             authRepository.login(email, password)
                 .onSuccess {
                     _authState.value = _authState.value.copy(
@@ -59,7 +62,7 @@ class AuthViewModel(
                 }
         }
     }
-    
+
     fun logout() {
         viewModelScope.launch {
             _authState.value = _authState.value.copy(isLoading = true)
@@ -67,26 +70,27 @@ class AuthViewModel(
             _authState.value = AuthState()
         }
     }
-    
+
     fun clearError() {
         _authState.value = _authState.value.copy(error = null)
     }
 }
 
-class DeviceViewModel(
+@HiltViewModel
+class DeviceViewModel @Inject constructor(
     private val deviceRepository: DeviceRepository
 ) : ViewModel() {
-    
+
     private val _devicesState = MutableStateFlow<UiState<List<Device>>>(UiState.Loading)
     val devicesState: StateFlow<UiState<List<Device>>> = _devicesState.asStateFlow()
-    
+
     private val _selectedDevice = MutableStateFlow<Device?>(null)
     val selectedDevice: StateFlow<Device?> = _selectedDevice.asStateFlow()
-    
+
     init {
         loadDevices()
     }
-    
+
     fun loadDevices() {
         viewModelScope.launch {
             _devicesState.value = UiState.Loading
@@ -98,7 +102,7 @@ class DeviceViewModel(
             }
         }
     }
-    
+
     fun controlDevice(deviceId: String, action: String) {
         viewModelScope.launch {
             deviceRepository.controlDevice(deviceId, action)
@@ -110,13 +114,14 @@ class DeviceViewModel(
                 }
         }
     }
-    
+
     fun selectDevice(device: Device) {
         _selectedDevice.value = device
     }
 }
 
-class SceneViewModel(
+@HiltViewModel
+class SceneViewModel @Inject constructor(
     private val sceneRepository: SceneRepository
 ) : ViewModel() {
 
@@ -176,21 +181,22 @@ class SceneViewModel(
     }
 }
 
-class MallViewModel(
+@HiltViewModel
+class MallViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
-    
+
     private val _productsState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     val productsState: StateFlow<UiState<List<Product>>> = _productsState.asStateFlow()
-    
+
     private val _hotProductsState = MutableStateFlow<UiState<List<Product>>>(UiState.Loading)
     val hotProductsState: StateFlow<UiState<List<Product>>> = _hotProductsState.asStateFlow()
-    
+
     init {
         loadProducts()
         loadHotProducts()
     }
-    
+
     fun loadProducts() {
         viewModelScope.launch {
             _productsState.value = UiState.Loading
@@ -202,7 +208,7 @@ class MallViewModel(
             }
         }
     }
-    
+
     fun loadHotProducts() {
         viewModelScope.launch {
             _hotProductsState.value = UiState.Loading
@@ -214,13 +220,14 @@ class MallViewModel(
             }
         }
     }
-    
+
     fun refreshProducts() {
         loadProducts()
     }
 }
 
-class ProfileViewModel(
+@HiltViewModel
+class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -244,7 +251,7 @@ class ProfileViewModel(
         viewModelScope.launch {
             val currentUser = (_profileState.value as? UiState.Success)?.data
             if (currentUser != null) {
-                val updatedUser = currentUser.copy(name = name, avatar = avatar)
+                val updatedUser = currentUser.copy(name = name, avatar = avatar ?: currentUser.avatar)
                 _profileState.value = UiState.Success(updatedUser)
             }
         }

@@ -15,31 +15,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.lautung.smart.di.appModules
 import com.lautung.smart.ui.theme.LanguageManager
 import com.lautung.smart.ui.theme.SmartTheme
 import com.lautung.smart.ui.theme.ThemeManager
 import com.lautung.smart.ui.theme.ThemeMode
 import com.lautung.smart.ui.screens.SmartNestApp
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.launch
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val themeManager by lazy { ThemeManager(this) }
     private lateinit var languageManager: LanguageManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        startKoin {
-            androidLogger()
-            androidContext(this@MainActivity)
-            modules(appModules)
-        }
 
         languageManager = LanguageManager(this)
 

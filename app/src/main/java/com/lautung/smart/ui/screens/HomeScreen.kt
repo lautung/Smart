@@ -36,7 +36,7 @@ import com.lautung.smart.ui.components.BottomNavigationBar
 import com.lautung.smart.ui.theme.MaterialDimens
 import com.lautung.smart.ui.viewmodel.HomeViewModel
 import com.lautung.smart.ui.viewmodel.UiState
-import org.koin.androidx.compose.koinViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 /**
  * 首页 - 使用可折叠标题栏
@@ -44,7 +44,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToScene: () -> Unit,
     onNavigateToMall: () -> Unit,
     onNavigateToProfile: () -> Unit,
